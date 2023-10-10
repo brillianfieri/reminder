@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User{
+    id Int @id @default(autoincrement())
+    name String @db.VarChar(255)
+    username String @db.VarChar(255) @unique
+    email         String?   @unique
+    password String @db.VarChar(255) 
+    role String @db.VarChar(255) 
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+    delete_user Int @db.TinyInt @default(0)
+    refresh_token      String?  @db.Text
+    access_token       String?  @db.Text
+    expires_at         Int?
+    token_type         String?
+    scope              String?
+    id_token           String?  @db.Text
+    session_state      String?
+
+    logs log[]
+    reminders reminder[]
+    shared_reminders shared_reminder[]
+}
+
+model log{
+  id Int @id @default(autoincrement())
+  log_date DateTime @db.Timestamp()
+  user User @relation(fields: [user_id], references: [id], onDelete:Cascade)
+  user_id Int @db.Int
+  message String @db.VarChar(255)
+}
+
+model reminder{
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [user_id], references: [id], onDelete:Cascade)
+  user_id Int @db.Int
+  reminder_msg String @db.VarChar(255)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  shared_reminders shared_reminder[]
+}
+
+model shared_reminder{
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [user_id], references: [id], onDelete:Cascade)
+  user_id Int @db.Int
+  reminder reminder @relation(fields: [reminder_id], references: [id], onDelete:Cascade)
+  reminder_id Int @db.Int
+}
