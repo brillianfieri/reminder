@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { getToken } from 'next-auth/jwt';
 import {getServerSession} from "next-auth/next"
 import {authOptions} from "../../auth/authOptions"
+import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
     const prisma = new PrismaClient();
@@ -15,9 +16,9 @@ export async function POST(request: Request) {
                 message: data.message
             }
         })
-        return Response.json(newLog)
+        return NextResponse.json(newLog)
 
     }else{
-        return new Response('Unauthorized', { status: 401 })
+        return NextResponse.json({error: "Unauthorized"}, {status: 401})
     }
 }

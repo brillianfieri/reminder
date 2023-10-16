@@ -29,7 +29,7 @@ model User{
     session_state      String?
 
     logs log[]
-    reminders reminder[]
+    reminder_categories reminder_category[]
     shared_reminders shared_reminder[]
 }
 
@@ -41,21 +41,36 @@ model log{
   message String @db.VarChar(255)
 }
 
-model reminder{
+model reminder_category{
   id Int @id @default(autoincrement())
+  name String @db.VarChar(255)
   user User @relation(fields: [user_id], references: [id], onDelete:Cascade)
   user_id Int @db.Int
-  reminder_msg String @db.VarChar(255)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
+  
+  reminders reminder[]
   shared_reminders shared_reminder[]
 }
 
-model shared_reminder{
+model reminder{
   id Int @id @default(autoincrement())
+  reminder_category reminder_category @relation(fields: [category_id], references: [id], onDelete:Cascade)
+  category_id Int @db.Int
+  is_completed Int @db.TinyInt @default(0)
+  reminder_title String @db.VarChar(255)
+  reminder_desc String @db.VarChar(255)
+  reminder_date DateTime?
+  time_flag Int @db.TinyInt @default(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  
+}
+
+model shared_reminder{
   user User @relation(fields: [user_id], references: [id], onDelete:Cascade)
   user_id Int @db.Int
-  reminder reminder @relation(fields: [reminder_id], references: [id], onDelete:Cascade)
-  reminder_id Int @db.Int
+  reminder_category reminder_category @relation(fields: [category_id], references: [id], onDelete:Cascade)
+  category_id Int @db.Int
+
+  @@id([user_id, category_id])
 }

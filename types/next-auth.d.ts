@@ -10,7 +10,8 @@ declare module "next-auth" {
         username: string,
         name: string,
         email: string,
-        role: string
+        role: string,
+        created_at:Date
     }
   }
   interface User extends DefaultUser {
@@ -19,6 +20,7 @@ declare module "next-auth" {
     name: string,
     role: string,
     email: string,
-    delete_user: boolean
+    delete_user: boolean,
+    created_at:Date
 }
 }

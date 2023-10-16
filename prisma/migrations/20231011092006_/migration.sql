@@ -33,10 +33,23 @@ CREATE TABLE `log` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `reminder_category` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL,
+    `user_id` INTEGER NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `reminder` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `user_id` INTEGER NOT NULL,
-    `reminder_msg` VARCHAR(255) NOT NULL,
+    `category_id` INTEGER NOT NULL,
+    `is_completed` TINYINT NOT NULL DEFAULT 0,
+    `reminder_title` VARCHAR(255) NOT NULL,
+    `reminder_desc` VARCHAR(255) NOT NULL,
+    `reminder_date` DATETIME(3) NULL,
+    `time_flag` TINYINT NOT NULL DEFAULT 0,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
@@ -45,21 +58,23 @@ CREATE TABLE `reminder` (
 
 -- CreateTable
 CREATE TABLE `shared_reminder` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `user_id` INTEGER NOT NULL,
-    `reminder_id` INTEGER NOT NULL,
+    `category_id` INTEGER NOT NULL,
 
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`user_id`, `category_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
 ALTER TABLE `log` ADD CONSTRAINT `log_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `reminder` ADD CONSTRAINT `reminder_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `reminder_category` ADD CONSTRAINT `reminder_category_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `reminder` ADD CONSTRAINT `reminder_category_id_fkey` FOREIGN KEY (`category_id`) REFERENCES `reminder_category`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `shared_reminder` ADD CONSTRAINT `shared_reminder_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `shared_reminder` ADD CONSTRAINT `shared_reminder_reminder_id_fkey` FOREIGN KEY (`reminder_id`) REFERENCES `reminder`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `shared_reminder` ADD CONSTRAINT `shared_reminder_category_id_fkey` FOREIGN KEY (`category_id`) REFERENCES `reminder_category`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

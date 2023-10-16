@@ -1,43 +1,60 @@
-import { PrismaClient } from "@prisma/client";
-// import { InferGetServerSidePropsType } from "next";
-import { signIn } from "next-auth/react";
-import { useRouter } from 'next/navigation'
+"use client";
+import DisplayUser from "./user/displayuser";
 import { useEffect, useState } from "react";
-import AdminEndpoint from "./endpoint";
+import DisplayLog from "./log/displaylog";
+import Account from "../user/account/page";
 
-export default  async function SignIn() {
-    const data = await getData();
-    console.log("data"+data)
-    return(
-        <AdminEndpoint users = {data}/>
-    )
-}
+export default  function AdminEndpoint(props: any ) {
+    const [menu, setMenu] = useState("account")
+    const [userData, setUserData] = useState();
+    const [logData, setLogData] = useState();
 
-
-async function getData() {
-    const prisma = new PrismaClient();
-    // const usersRes = await fetch('http://localhost:3000/api/user', {
-    //     method: 'GET',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },next: { revalidate: 0 }
-    //     ,cache: 'no-store'
-    //   })
-
-    const users = await prisma.user.findMany({
-        where:{
-            delete_user: 0
-        },select:{
-            id:true,
-            name:true,
-            username:true,
-            email:true,
-            role:true,
+    useEffect(()=>{
+        if(menu == "user"){
+            fetchUserData()
+        }else if(menu == "log"){
+            fetchLogData()
         }
-        ,orderBy:{
-            name: "asc"
-        }
-    });
+       
+    }, [menu]);
 
-    return(users)
+    const fetchUserData = async () => {
+        const fetchUserData = await fetch('/api/user')
+        const fetchUserDataRes = await fetchUserData.json()
+        setUserData(fetchUserDataRes)
+    }
+
+    const fetchLogData = async () => {
+        const fetchLogData = await fetch('/api/log')
+        const fetchLogDataRes = await fetchLogData.json()
+        setLogData(fetchLogDataRes)
+    }
+
+    const menuClicked = async (menu:string) => {
+        setMenu(menu)
+    }
+
+    // const logClicked = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    //     event.preventDefault()
+    //     setAdminMenu("log");
+    // }
+    
+    
+    if((!userData && menu == "user") || (!logData && menu=="log")){return <></>}
+    else{
+        return(
+            <>
+                <div className="px-5 pt-5 flex">
+                    <button onClick={()=>menuClicked("account")}> <h1 className={menu == "account" ? "text-2xl font-bold text-black text-opacity-100 dark:text-white mr-3" : "text-2xl font-bold text-black text-opacity-30 dark:text-opacity-30 dark:text-white mr-3"}>Account</h1> </button>
+                    <button onClick={()=>menuClicked("user")}> <h1 className={menu == "user" ? "text-2xl font-bold text-black text-opacity-100 dark:text-white mr-3" : "text-2xl font-bold text-black text-opacity-30 dark:text-opacity-30 dark:text-white mr-3"}>Users</h1> </button>
+                    <button onClick={()=>menuClicked("log")}><h1 className={menu == "log" ? "text-2xl font-bold text-black text-opacity-100 dark:text-white mr-3" : "text-2xl font-bold text-black text-opacity-30 dark:text-opacity-30 dark:text-white mr-3"}>Log</h1></button>
+                </div>
+                
+                {userData && menu == "user" ?  <DisplayUser userData = {userData}  fetchUserData = {fetchUserData}/> : null}
+                {logData && menu == "log" ? <DisplayLog logs={logData}/> : null}
+                {menu == "account" ? <Account/> : null}
+                
+            </>
+        )
+    }
 }

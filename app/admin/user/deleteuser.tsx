@@ -1,11 +1,11 @@
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import Modal from 'react-modal'
-// import {User} from '../type'
 import {customStyles} from '../../modal.css.js'
 import Log from '@/app/log/log'
+import { FetchUserData, User } from '@/app/type'
 
-const DeleteUser = (props:any) => {
+const DeleteUser = ({userData, fetchUserData}:{userData:User, fetchUserData:FetchUserData}) => {
 
    const router = useRouter()
 
@@ -28,17 +28,16 @@ const DeleteUser = (props:any) => {
            'Content-Type': 'application/json',
          },
          body: JSON.stringify({
-          id: props.user.id
+          id: userData.id
        }),
        })
 
       // Change log
-      Log(`removed ${props.user.username} from the user list.`)
+      Log(`removed ${userData.username} from the user list.`)
 
-      alert(props.user.username + ' has been removed from the list.')
+      alert(userData.username + ' has been removed from the list.')
       setIsOpen(false)
-      router.refresh()
-      // router.push('/admin')
+      fetchUserData()
   }
 
    return (
@@ -49,10 +48,10 @@ const DeleteUser = (props:any) => {
 
 
          <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)} style={customStyles}>
-            <form onSubmit={handleSubmit} className="p-5 rounded-xl bg-white dark:bg-gray-900" >
+            <form onSubmit={handleSubmit} className="p-5 rounded-xl bg-white dark:bg-zinc-900" >
                <div>
                   <h2 className='flex flex-direction-row content-center justify-center text-xl font-bold dark:text-white pb-5'>
-                     Delete {props.user.username}?
+                     Delete {userData.username}?
                   </h2>
 
                </div>

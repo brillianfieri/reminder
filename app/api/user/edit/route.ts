@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { getToken } from 'next-auth/jwt';
 import {getServerSession} from "next-auth/next"
 import {authOptions} from "../../auth/authOptions"
 import { hash } from 'bcrypt';
@@ -12,7 +11,16 @@ export async function POST(request: Request) {
 
     const countUser = await prisma.user.count()
 
-    if(session && session?.user.role == 'admin'){
+    let role = "user"
+
+    if(session ){
+        if(session?.user.role != 'admin'){
+            if(session?.user.user_id != data.id){
+                return NextResponse.json({error: "Unauthorized"}, {status: 401})
+            }
+        }else{
+            role = data.role
+        }
 
         const checkUsername = await prisma.user.findMany({
             where:{
@@ -24,8 +32,6 @@ export async function POST(request: Request) {
                 }
             }
         })
-
-        console.log("checkUsername"+checkUsername)
     
         const checkEmail = await prisma.user.findMany({
             where:{
@@ -37,13 +43,10 @@ export async function POST(request: Request) {
                 }
             }
         })
-
-        console.log("checkEmail"+ checkEmail)
         
         
         // Check if the username and email is already exist.
         if(checkUsername.length > 0){
-            console.log("a2")
             return NextResponse.json({
                 error: "The username has already been taken."
             }, {
@@ -64,7 +67,7 @@ export async function POST(request: Request) {
                     name: data.name,
                     username: data.username,
                     email: data.email,
-                    role: data.role,
+                    role: role,
                     password:password
                 }
 
@@ -73,7 +76,7 @@ export async function POST(request: Request) {
                     name: data.name,
                     username: data.username,
                     email: data.email,
-                    role: data.role,
+                    role: role,
                 }
             }
             const newUser = await prisma.user.update({
@@ -83,10 +86,10 @@ export async function POST(request: Request) {
                 data: newData
             })
 
-            return Response.json(newUser)
+            return NextResponse.json(newUser)
         }
 
     }else{
-        return new Response('Unauthorized', { status: 401 })
+        return NextResponse.json({error: "Unauthorized"}, {status: 401})
     }
 }

@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { getToken } from 'next-auth/jwt';
 import {getServerSession} from "next-auth/next"
 import {authOptions} from "../../auth/authOptions"
 import { hash } from 'bcrypt';
@@ -22,7 +21,6 @@ export async function POST(request: Request) {
             email: data.email
         }
     })
-    console.log("a1")
     
     // Default role = user
     let role = 'user'
@@ -41,7 +39,6 @@ export async function POST(request: Request) {
 
     // Check if the username is already exist.
     if(checkUsername){
-        console.log("a2")
         return NextResponse.json({
             error: "The username has already been taken."
         }, {

@@ -1,12 +1,12 @@
 import { PrismaClient } from '@prisma/client';
-import { getToken } from 'next-auth/jwt';
 import {getServerSession} from "next-auth/next"
 import {authOptions} from "../auth/authOptions"
+import { NextResponse } from 'next/server';
 
 export async function GET() {
     const prisma = new PrismaClient();
     const session = await getServerSession(authOptions)
-    if(1 == 1){
+    if(session?.user.role == "admin"){
         const users = await prisma.user.findMany({
             where:{
                 delete_user: 0
@@ -20,9 +20,9 @@ export async function GET() {
             ,orderBy:{
                 name: "asc"
             }
-        });
-        return Response.json(users)
+        });    
+        return NextResponse.json(users)
     }else{
-        return new Response('Unauthorized', { status: 401 })
+        return NextResponse.json({error: "Unauthorized"}, {status: 401})
     }
 }

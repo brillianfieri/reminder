@@ -20,8 +20,10 @@ export default function RootLayout({
         <meta name='description' content='Reminder' />
       </head>
       <body className={inter.className}>
-        <NavBar/>
-        {children}
+        <div className='min-h-screen pb-5 bg-white dark:bg-black'>
+          <NavBar/>
+          {children}
+        </div>
       </body>
     </html>
     </SessionProvider >

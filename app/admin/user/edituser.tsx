@@ -3,17 +3,15 @@ import React, { useState } from 'react'
 import Modal from 'react-modal'
 import {customStyles} from '../../modal.css.js'
 import Log from '@/app/log/log'
-// import Log from '../log/log'
+import { FetchUserData, User } from '@/app/type'
 
-const EditUser = (props:any) => {
-   const [fname, setFname] = useState(props.user.name)
-   const [username, setUsername] = useState(props.user.username)
-   const [email, setEmail] = useState(props.user.email)
-   const [role, setRole] = useState(props.user.role)
+const EditUser = ({userData, fetchUserData}:{userData:User, fetchUserData:FetchUserData}) => {
+   const [fname, setFname] = useState(userData.name)
+   const [username, setUsername] = useState(userData.username)
+   const [email, setEmail] = useState(userData.email)
+   const [role, setRole] = useState(userData.role)
    const [password, setPassword] = useState("")
 //    const [itemQty, setItemQty] = useState(item.qty)
-
-   const router = useRouter()
 
    const [isOpen, setIsOpen] = useState(false)
 
@@ -31,11 +29,11 @@ const EditUser = (props:any) => {
             'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                id: props.user.id,
+                id: userData.id,
                 name: fname,
-                oldusername: props.user.username,
+                oldusername: userData.username,
                 username: username,
-                oldemail: props.user.email,
+                oldemail: userData.email,
                 email: email,
                 password: password,
                 role: role,
@@ -47,28 +45,28 @@ const EditUser = (props:any) => {
 
         if(editUser.status === 400){
             alert(editUserRes.error)
-            setEmail(props.user.email)
-            setUsername(props.user.username)
+            setEmail(userData.email)
+            setUsername(userData.username)
         }else{
 
             // Change log
-            if(props.user.username != username){
-                Log(`modified ${props.user.username}'s username to ${username}.`)
+            if(userData.username != username){
+                Log(`modified ${userData.username}'s username to ${username}.`)
             }
-            if(props.user.name != fname){
-                Log(`modified ${props.user.username}'s name from ${props.user.name} to ${fname}.`)
+            if(userData.name != fname){
+                Log(`modified ${userData.username}'s name from ${userData.name} to ${fname}.`)
             }
-            if(props.user.role != role){
-                Log(`modified ${props.user.username}'s role from ${props.user.role} to ${role}.`)
+            if(userData.role != role){
+                Log(`modified ${userData.username}'s role from ${userData.role} to ${role}.`)
             }
             if(password != ""){
-                Log(`modified ${props.user.username}'s password.`)
+                Log(`modified ${userData.username}'s password.`)
             }
 
 
             alert('Edit success!')
             setIsOpen(false)
-            router.refresh()
+            fetchUserData()
         }
          
     }
@@ -81,7 +79,7 @@ const EditUser = (props:any) => {
 
 
          <Modal className='' isOpen={isOpen} onRequestClose={() => setIsOpen(false)} style={customStyles}>
-            <form onSubmit={handleSubmit} className="p-5 bg-white dark:bg-gray-900" >
+            <form onSubmit={handleSubmit} className="p-5 bg-white dark:bg-zinc-900" >
                 <div className="relative z-0 w-full mb-6 group">
                     <input type="text" value={username}  onChange={(e) => setUsername(e.target.value)} name="username" id="username" className="block py-3 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" required />
                     <label htmlFor="username" className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Username</label>
@@ -97,7 +95,7 @@ const EditUser = (props:any) => {
 
                 <div className="pb-4">
                     <label htmlFor="role" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select category</label>
-                    <select id="role" value={role}  onChange={(e) => setRole(e.target.value)}  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select id="role" value={role}  onChange={(e) => setRole(e.target.value)}  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-zinc-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option value="admin">Admin</option>
                     <option value="user">User</option>
                     </select>

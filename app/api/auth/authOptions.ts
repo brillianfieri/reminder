@@ -41,7 +41,8 @@ export const authOptions: NextAuthOptions = {
                   name: user.name,
                   role: user.role,
                   email: user.email,
-                  delete_user: user.delete_user
+                  delete_user: user.delete_user,
+                  created_at: user.created_at
                 } as any
             }
           } else {
@@ -73,7 +74,10 @@ export const authOptions: NextAuthOptions = {
             }
             if (user?.email) {
               token.email = user.email;
-          }
+            }
+            if (user?.created_at) {
+              token.created_at = user.created_at;
+            }
             return token
          },
          async session({session, token}) {
@@ -81,6 +85,7 @@ export const authOptions: NextAuthOptions = {
           session.user.username = token.username as string
           session.user.role = token.role as string
           session.user.email = token.email as string
+          session.user.created_at = token.created_at as Date
           return session
         }
     },
