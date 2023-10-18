@@ -59,7 +59,6 @@ model reminder{
   reminder_title String @db.VarChar(255)
   reminder_desc String @db.VarChar(255)
   reminder_date DateTime?
-  time_flag Int @db.TinyInt @default(0)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 

@@ -43,15 +43,21 @@ export default  function ReminderDetail({reminderData, reminderParams, setRemind
         return(
             <>
             <div className="p-4 sm:ml-64">
-                <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+                <div className="p-4 border-2 border-gray-200 rounded-lg dark:border-gray-700">
                     <div className="flex flex-wrap  justify-between mx-auto mb-5">
-                        {/* reminder category name */}
+                        
                         <div className="flex flex-direction-row items-center justify-center">
-                            <div><h1 className="text-4xl pb-2 font-bold dark:text-white">{reminderParams.categoryName}</h1></div>
+                            <div className="flex items-center pb-2">
+                                {/* reminder category name */}
+                                <h1 className="text-3xl font-bold dark:text-white pr-2">{reminderParams.categoryName}</h1>
+                                {/* Category owner for shared reminder */}
+                                {reminderParams.reminderType == 1 ? <div className="px-1 rounded text-white bg-gray-400 dark:bg-gray-500"><h1 className="text-xl  dark:text-white">{reminderParams.sharedOwner}</h1></div> : null}
+                            </div>
+                            {/* Edit title */}
                             {(reminderParams.reminderType == 0) ? <EditCategory reminderParams={reminderParams} setReminderParams={setReminderParams}/> :null}
                         </div>
-                        {/* Action button */}
                         
+                            {/* Action button */}
                             <div className="flex">
                                 <button onClick={()=>setEditClicked(!editClicked)}  type="button" className="text-black bg-slate-300 hover:bg-slate-400 focus:outline-none focus:ring-4 font-medium rounded-full text-sm p-3 text-center mr-2 mb-2 dark:bg-slate-700 dark:hover:bg-slate-800 dark:text-white">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
@@ -78,14 +84,24 @@ export default  function ReminderDetail({reminderData, reminderParams, setRemind
                     {reminderData.length ?
                         <div>
                             {reminderData.map((reminder: ReminderData)=>{
-                                // Setup local date
+                                // Setup reminder color for scheduled 
                                 let localeDate = null
+                                let mainColor = "text-black dark:text-slate-200"
+                                let subColor = "text-black dark:text-slate-300"
+                                let categoryBox = "bg-gray-400 dark:bg-gray-500"
                                 if(reminder.reminder_date){
                                     localeDate = new Date(reminder.reminder_date)
-                                    localeDate.setMinutes(localeDate.getMinutes() - timeOffset)
+                                    const currDate = new Date()
+                                    
+                                    if(localeDate < currDate && reminder.is_completed === 0){
+                                        mainColor = "text-red-700"
+                                        subColor = "text-red-600"
+                                        categoryBox = "bg-red-600"
+                                    }
+                                    console.log(mainColor)
                                 }
                                 return(
-                                    <div key={reminder.id} className="flex flex-wrap items-center justify-between p-3 mb-3 rounded bg-gray-50 dark:bg-gray-800">
+                                    <div key={reminder.id} className={`${subColor} flex flex-wrap items-center justify-between p-3 mb-3 rounded bg-gray-100 dark:bg-gray-800`}>
                                         <div  className="flex ">
                                             <button onClick={()=>boxClicked(reminder.id, reminder.category_id, reminder.is_completed)} className="pr-2">
                                                 {reminder.is_completed == 0 ?
@@ -98,23 +114,22 @@ export default  function ReminderDetail({reminderData, reminderParams, setRemind
                                             </button>
     
                                             <div>
-                                                <div><h1>{reminder.reminder_title}</h1></div>
+                                                <div className="flex flex-wrap items-center">
+                                                    <div><h1 className={`${mainColor} text-xl font-bold pr-2`}>{reminder.reminder_title}</h1></div>
+                                                    {/* Display category name for scheduled tab */}
+                                                    {reminderParams.reminderType == 2 ? 
+                                                        <div className={`${categoryBox} px-1 rounded text-white`}>{reminder.reminder_category.name}</div>
+                                                        : null
+                                                    }
+
+                                                </div>
+                                                <div className="flex">
+                                                    {localeDate ? <><h2 className="">{localeDate.toLocaleDateString("fr-CA")}&nbsp;&nbsp;</h2> 
+                                                        <h2> {localeDate.toLocaleTimeString("en-GB",{hour: '2-digit', minute:'2-digit'})}</h2></>:null}
+                                                </div>                                                
                                                 <div><pre>{reminder.reminder_desc}</pre></div>
-                                                {localeDate ?
-                                                    <div><h2>{localeDate.toDateString()}</h2></div>
-                                                    :null
-                                                }
-                                                {reminder.time_flag == 1 && localeDate ? 
-                                                    <div><h2>{('0'+ localeDate.getUTCHours()).slice(-2)+":"+ ('0'+ localeDate.getUTCMinutes()).slice(-2)}</h2></div>
-                                                    :null
-                                                }
+                                                
                                             </div>
-                                            
-                                            {/* Display category name for scheduled tab */}
-                                            {reminderParams.reminderType == 2 ? 
-                                                <div>{reminder.reminder_category.name}</div>
-                                                : null
-                                            }
                                             
                                         </div>
 

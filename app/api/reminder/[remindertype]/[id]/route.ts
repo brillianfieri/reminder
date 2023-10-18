@@ -25,7 +25,10 @@ export async function GET(
                     reminder_category:{
                         id: parseInt(params.id)
                     },
-                }
+                },
+                orderBy:[
+                    {is_completed:"asc"},
+                ]
             })
         }else if(parseInt(params.remindertype) == 1){
             newReminder = await prisma.reminder.findMany({
@@ -41,7 +44,10 @@ export async function GET(
                             }
                         }
                     },
-                }
+                },
+                orderBy:[
+                    {is_completed:"asc"},
+                ]
             })
         }else{
             newReminder = await prisma.reminder.findMany({

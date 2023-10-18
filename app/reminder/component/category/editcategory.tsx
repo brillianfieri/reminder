@@ -29,7 +29,7 @@ const EditCategory = ({reminderParams, setReminderParams}:{reminderParams:Remind
 
         // Close modal and refetch new data
         setIsOpen(false)
-        setReminderParams({categoryName:categoryName,reminderType:0, categoryId:reminderParams.categoryId})
+        setReminderParams({categoryName:categoryName,reminderType:0, categoryId:reminderParams.categoryId, sharedOwner:reminderParams.sharedOwner})
         
   }
 

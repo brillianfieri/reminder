@@ -24,8 +24,13 @@ export async function GET(request: Request) {
                     select:{
                         name:true,
                         id:true,
-                    }
-                }
+                        user:{
+                            select:{
+                                username:true
+                            }
+                        }
+                    },
+                },
             }
         })
 

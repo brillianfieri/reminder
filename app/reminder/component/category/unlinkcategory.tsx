@@ -28,7 +28,7 @@ const UnlinkCategory = ({reminderParams, setReminderParams}: {reminderParams:Rem
 
         // Refetch new data
         setIsOpen(false)
-        setReminderParams({categoryName:"Scheduled",reminderType:2, categoryId:0})
+        setReminderParams({categoryName:"Scheduled",reminderType:2, categoryId:0, sharedOwner:""})
     }
 
    return (

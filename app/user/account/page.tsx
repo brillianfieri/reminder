@@ -41,7 +41,7 @@ export default  function Account() {
                         <div className="flex justify-center relative max-h-[65vh] overflow-y-auto overflow-x-auto">
                             <table className="text-left text-gray-500 dark:text-gray-400">
                                 <tbody>
-                                <tr className="text-base md:text-lg bg-white dark:bg-zinc-900 dark:border-gray-700">
+                                <tr className="text-base md:text-lg bg-white dark:bg-black">
                                     <th scope="row" className="py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         Name
                                     </th>
@@ -49,7 +49,7 @@ export default  function Account() {
                                         : {account?.name}
                                     </td>
                                 </tr>
-                                <tr className="text-base md:text-lg bg-white dark:bg-zinc-900 dark:border-gray-700">
+                                <tr className="text-base md:text-lg bg-white dark:bg-black">
                                     <th scope="row" className="py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         Member since
                                     </th>
@@ -57,7 +57,7 @@ export default  function Account() {
                                         : {createdAt}
                                     </td>
                                 </tr>
-                                <tr className="text-base md:text-lg bg-white dark:bg-zinc-900 dark:border-gray-700">
+                                <tr className="text-base md:text-lg bg-white dark:bg-black">
                                     <th scope="row" className="py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         Username
                                     </th>
@@ -65,7 +65,7 @@ export default  function Account() {
                                         : {account?.username}
                                     </td>
                                 </tr>
-                                <tr className="text-base md:text-lg bg-white dark:bg-zinc-900 dark:border-gray-700">
+                                <tr className="text-base md:text-lg bg-white dark:bg-black">
                                     <th scope="row" className="py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         Email
                                     </th>

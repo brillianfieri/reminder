@@ -32,7 +32,6 @@ export type ReminderData={
     reminder_title: string;
     reminder_desc: string;
     reminder_date: Date | null;
-    time_flag: number;
     created_at: Date;
     updated_at: Date;
 }
@@ -50,6 +49,9 @@ export type ReminderCategory={
 
 export type SharedReminderCategory={
     reminder_category: {
+        user: {
+            username: string;
+        };
         id: number;
         name: string;
     };
@@ -63,6 +65,7 @@ export type ReminderParams = {
     categoryName: string;
     reminderType: number;
     categoryId: number;
+    sharedOwner:string;
 }
 
 export type ShareList = {
@@ -77,6 +80,7 @@ export type SetReminderParams = React.Dispatch<React.SetStateAction<{
     categoryName: string;
     reminderType: number;
     categoryId: number;
+    sharedOwner: string;
 }>>;
 
 export type FetchReminderData = (refreshReminder: boolean, refreshCategory: boolean, reminderType: number | null, categoryId: number | null) => Promise<void>

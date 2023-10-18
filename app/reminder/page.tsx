@@ -6,15 +6,12 @@ import { ReminderCategory, ReminderData, SharedReminderCategory } from "../type"
 
 
 export default function Reminder() {
-    const router = useRouter()
-
-    
     const [isVisible, setIsVisible] = useState(false)
     const [name, setName] = useState("")
     const [reminderCategory, setReminderCategory] = useState<ReminderCategory[]>()
     const [sharedReminderCategory, setSharedReminderCategory] = useState<SharedReminderCategory[]>()
     // ReminderParams-ReminderType: 0:regular reminder category, 1: shared reminder category, 2: scheduled
-    const [reminderParams, setReminderParams] = useState({categoryName:"Scheduled",reminderType:2, categoryId:0})
+    const [reminderParams, setReminderParams] = useState({categoryName:"Scheduled",reminderType:2, categoryId:0, sharedOwner:""})
     const [reminderData, setReminderData] = useState<ReminderData[]>()
 
     useEffect(()=>{
@@ -30,6 +27,7 @@ export default function Reminder() {
         if(refreshCategory){
             const fetchCategoryData = await fetch(`/api/reminder/category/`)
             const fetchCategoryDataRes = await fetchCategoryData.json()
+            console.log(fetchCategoryDataRes)
             setReminderCategory(fetchCategoryDataRes.reminderCategory)
             setSharedReminderCategory(fetchCategoryDataRes.sharedReminderCategory)
         }
@@ -69,6 +67,7 @@ export default function Reminder() {
             }
         }
     }
+    const listCss ="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 group"
 
     if(!reminderData || !reminderCategory || !sharedReminderCategory){
         return <></>
@@ -88,9 +87,16 @@ export default function Reminder() {
                 <div className="h-full px-3 py-4 overflow-y-auto bg-zinc-50 dark:bg-zinc-800">
                     <ul className="space-y-2 font-medium">
                         <li>
+                            <a onClick={()=>{setReminderParams({categoryName: "Scheduled" ,reminderType:2, categoryId:0, sharedOwner:""}); sideBarButtonClicked(true);}} className={`${(reminderParams.categoryId == 0 && reminderParams.reminderType == 2) ? "bg-gray-200 dark:bg-zinc-900": ""} ${listCss}`}>
+                                <span className="ml-3">Scheduled</span>
+                            </a>
+                        </li>
+                        <h2 className="pt-5 px-4 pb-3 text-xl font-bold dark:text-white">Your List</h2>
+
+                        <li>
                             {isVisible ? 
                                 <div>
-                                    <span className="flex-1 ml-3 p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 font-bold whitespace-nowrap">Add Category</span>
+                                    <span className="flex-1 ml-3 p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 font-bold whitespace-nowrap">Add List</span>
                                     <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white group">
                                         <form onSubmit={handleSubmit} className="flex-1 ml-3 whitespace-nowrap">
                                             <input type="text" value={name} onChange={(e) => setName(e.target.value)} name="cartQty" id="cartQty" className="block px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
@@ -99,20 +105,16 @@ export default function Reminder() {
                                     </div>
                                 </div>
                                 :<a onClick={()=>setIsVisible(true)} className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 group">
-                                <span className="flex-1 ml-3 font-bold whitespace-nowrap">Add Category</span>
+                                <span className="flex-1 ml-3 font-bold whitespace-nowrap">Add List</span>
                                 </a>
                             }
                         </li>
-                        <li>
-                            <a onClick={()=>{setReminderParams({categoryName: "Scheduled" ,reminderType:2, categoryId:0}); sideBarButtonClicked(true);}} className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 group">
-                                <span className="ml-3">Scheduled</span>
-                            </a>
-                        </li>
+
                         {reminderCategory.length ? 
                             <>{reminderCategory.map((category:ReminderCategory) => {
                                 return(
                                     <li key={category.id}>
-                                        <a onClick={()=>{setReminderParams({categoryName: category.name ,reminderType:0, categoryId:category.id}); sideBarButtonClicked(true);}} className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 group">
+                                        <a onClick={()=>{setReminderParams({categoryName: category.name ,reminderType:0, categoryId:category.id, sharedOwner:""}); sideBarButtonClicked(true);}} className={`${(reminderParams.categoryId == category.id && reminderParams.reminderType == 0) ? "bg-gray-200 dark:bg-zinc-900": ""} ${listCss}`}>
                                             <span className="ml-3">{category.name}</span>
                                         </a>
                                     </li>
@@ -120,25 +122,26 @@ export default function Reminder() {
                                 
                             })}</>
                         :null}
-                        
-                    </ul>
-    
-                    {sharedReminderCategory.length ? 
-                        <><h2 className="pt-5 px-4 text-xl font-bold dark:text-white">Shared with you</h2>
-                        <ul className="space-y-2 font-medium">
+
+                        {sharedReminderCategory.length ? 
+                            <><h2 className="pt-5 px-4 pb-3 text-xl font-bold dark:text-white">Shared with you</h2>
+                            
                             {sharedReminderCategory.map((category:SharedReminderCategory) => {
                                 return(
                                     <li key={category.category_id}>
-                                        <a onClick={()=>{setReminderParams({categoryName:category.reminder_category.name ,reminderType:1, categoryId:category.category_id}); sideBarButtonClicked(true); }} className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 group">
+                                        <a onClick={()=>{setReminderParams({categoryName:category.reminder_category.name ,reminderType:1, categoryId:category.category_id, sharedOwner:category.reminder_category.user.username}); sideBarButtonClicked(true); }} className={`${(reminderParams.categoryId == category.category_id && reminderParams.reminderType == 1) ? "bg-gray-200 dark:bg-zinc-900": ""} ${listCss}`}>
                                             <span className="ml-3">{category.reminder_category.name}</span>
                                         </a>
                                     </li>
                                 )
                                 
                             })}
-                            
-                        </ul></>
-                    :null}
+                            </>
+                        :null}
+
+                    </ul>
+    
+                    
     
                 </div>
                 </aside>

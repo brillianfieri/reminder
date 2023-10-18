@@ -49,7 +49,6 @@ CREATE TABLE `reminder` (
     `reminder_title` VARCHAR(255) NOT NULL,
     `reminder_desc` VARCHAR(255) NOT NULL,
     `reminder_date` DATETIME(3) NULL,
-    `time_flag` TINYINT NOT NULL DEFAULT 0,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 

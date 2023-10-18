@@ -36,7 +36,6 @@ export async function POST(request: Request) {
                     reminder_title: data.reminder_title,
                     reminder_desc: data.reminder_desc,
                     reminder_date: data.reminder_date,
-                    time_flag: data.time_flag
                 }
             }else{
                 reminderData={

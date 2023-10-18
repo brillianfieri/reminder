@@ -27,7 +27,7 @@ const DeleteCategory = ({reminderParams, setReminderParams}:{reminderParams:Remi
 
         // Close modal and refetch new data
         setIsOpen(false)
-        setReminderParams({categoryName:"Scheduled",reminderType:2, categoryId:0})
+        setReminderParams({categoryName:"Scheduled",reminderType:2, categoryId:0, sharedOwner:""})
     }
 
    return (
